@@ -83,13 +83,22 @@ public class MainActivity extends AppCompatActivity {
             try
             {
                 JSONArray bookArray = new JSONArray(result);
-                for(int i=0; i< bookArray.length(); i++)
-                {
-                    JSONObject bookObj = bookArray.getJSONObject(i);
-                    listBookId.add(bookObj.getString("id"));
-                    listBookName.add(bookObj.getString("name"));
-                    listBookAuthor.add(bookObj.getString("author"));
-                }
+
+//                for(int i=0; i< bookArray.length(); i++)
+//                {
+//                    JSONObject bookObj = bookArray.getJSONObject(i);
+//                    listBookId.add(bookObj.getString("id"));
+//                    listBookName.add(bookObj.getString("name"));
+//                    listBookAuthor.add(bookObj.getString("author"));
+//                }
+
+                JSONObject cartoonBookObj = bookArray.getJSONObject(0);
+                JSONObject historyBookObj = bookArray.getJSONObject(1);
+                JSONObject novalBookObj = bookArray.getJSONObject(2);
+
+                Book cartoon = new Book(Integer.parseInt(cartoonBookObj.getString("id")), cartoonBookObj.getString("name"), cartoonBookObj.getString("author"));
+                Book history = new Book(Integer.parseInt(historyBookObj.getString("id")), historyBookObj.getString("name"), historyBookObj.getString("author"));
+                Book noval = new Book(Integer.parseInt(novalBookObj.getString("id")), novalBookObj.getString("name"), novalBookObj.getString("author"));
 
                 TextView bookId1 = findViewById(R.id.bookId1);
                 TextView bookId2 = findViewById(R.id.bookId2);
@@ -101,15 +110,26 @@ public class MainActivity extends AppCompatActivity {
                 TextView bookAuthor2 = findViewById(R.id.bookAuthor2);
                 TextView bookAuthor3 = findViewById(R.id.bookAuthor3);
 
-                bookId1.setText(listBookId.get(0).toString());
-                bookId2.setText(listBookId.get(1).toString());
-                bookId3.setText(listBookId.get(2).toString());
-                bookName1.setText(listBookName.get(0).toString());
-                bookName2.setText(listBookName.get(1).toString());
-                bookName3.setText(listBookName.get(2).toString());
-                bookAuthor1.setText(listBookAuthor.get(0).toString());
-                bookAuthor2.setText(listBookAuthor.get(1).toString());
-                bookAuthor3.setText(listBookAuthor.get(2).toString());
+//                bookId1.setText(listBookId.get(0).toString());
+//                bookId2.setText(listBookId.get(1).toString());
+//                bookId3.setText(listBookId.get(2).toString());
+//                bookName1.setText(listBookName.get(0).toString());
+//                bookName2.setText(listBookName.get(1).toString());
+//                bookName3.setText(listBookName.get(2).toString());
+//                bookAuthor1.setText(listBookAuthor.get(0).toString());
+//                bookAuthor2.setText(listBookAuthor.get(1).toString());
+//                bookAuthor3.setText(listBookAuthor.get(2).toString());
+
+                bookId1.setText(String.valueOf(cartoon.getId()));
+                bookId2.setText(String.valueOf(history.getId()));
+                bookId3.setText(String.valueOf(noval.getId()));
+                bookName1.setText(cartoon.getName());
+                bookName2.setText(history.getName());
+                bookName3.setText(noval.getName());
+                bookAuthor1.setText(cartoon.getAuthor());
+                bookAuthor2.setText(history.getAuthor());
+                bookAuthor3.setText(noval.getAuthor());
+
             }
             catch (JSONException e)
             {
