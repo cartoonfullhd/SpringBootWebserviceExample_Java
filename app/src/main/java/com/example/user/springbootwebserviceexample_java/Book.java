@@ -24,6 +24,18 @@ public class Book {
         return author;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
     @Override
     public String toString() {
         return String.format("Book [id=%s, name=%s, author=%s]", id, name, author);
