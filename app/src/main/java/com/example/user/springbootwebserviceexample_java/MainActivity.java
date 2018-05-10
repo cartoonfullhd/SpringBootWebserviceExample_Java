@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -77,6 +78,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        updateBtn.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                // TODO Auto-generated method stub
+                txtId = editIdBook.getText().toString();
+                txtAuthor = editAuthorBook.getText().toString();
+                txtName = editNameBook.getText().toString();
+                if(TextUtils.isEmpty(txtId) || TextUtils.isEmpty(txtAuthor) || TextUtils.isEmpty(txtName))
+                {
+                    editIdBook.setError("Input id of book");
+                    editNameBook.setError("Input name of book");
+                    editAuthorBook.setError("Input author of book");
+                }
+                else{
+                    String[] bookData = {txtId, txtName, txtAuthor};
+                    new updateBook().execute(bookData);
+                }
+            }
+        });
     }
 
     private class getBook extends AsyncTask<Void, Void, String>
@@ -105,12 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 InputStreamReader Char = new InputStreamReader(Byte);
                 BufferedReader reader = new BufferedReader(Char);
                 StringBuilder builder = new StringBuilder();
-//                while ((reader.s()) != null)
-//                {
-//                    StringBuffer dataResponse = new StringBuffer();
-//                    dataResponse.append(reader.readLine());
-//                    JSONResult = dataResponse.toString();
-//                }
+
                 while ((line = reader.readLine()) != null) {
                     builder.append(line + "\n");
                 }
@@ -135,20 +151,9 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result)
         {
             super.onPostExecute(result);
-//            List<String> listBookId = new ArrayList<>();
-//            List<String> listBookName = new ArrayList<>();
-//            List<String> listBookAuthor = new ArrayList<>();
             try
             {
                 JSONArray bookArray = new JSONArray(result);
-
-//                for(int i=0; i< bookArray.length(); i++)
-//                {
-//                    JSONObject bookObj = bookArray.getJSONObject(i);
-//                    listBookId.add(bookObj.getString("id"));
-//                    listBookName.add(bookObj.getString("name"));
-//                    listBookAuthor.add(bookObj.getString("author"));
-//                }
 
                 Book[] book = new Book[bookArray.length()];
                 for(int i=0; i< bookArray.length(); i++)
@@ -156,17 +161,6 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject bookObj = bookArray.getJSONObject(i);
                     book[i] = new Book(Integer.parseInt(bookObj.getString("id")), bookObj.getString("name"), bookObj.getString("author"));
                 }
-
-                /*JSONObject cartoonBookObj = bookArray.getJSONObject(0);
-                JSONObject historyBookObj = bookArray.getJSONObject(1);
-                JSONObject novalBookObj = bookArray.getJSONObject(2);
-
-
-                Book cartoon = new Book(Integer.parseInt(cartoonBookObj.getString("id")), cartoonBookObj.getString("name"), cartoonBookObj.getString("author"));
-                Book history = new Book(Integer.parseInt(historyBookObj.getString("id")), historyBookObj.getString("name"), historyBookObj.getString("author"));
-                Book noval = new Book(Integer.parseInt(novalBookObj.getString("id")), novalBookObj.getString("name"), novalBookObj.getString("author"));
-
-                */
                 TextView bookId1 = findViewById(R.id.bookId1);
                 TextView bookId2 = findViewById(R.id.bookId2);
                 TextView bookId3 = findViewById(R.id.bookId3);
@@ -177,27 +171,6 @@ public class MainActivity extends AppCompatActivity {
                 TextView bookAuthor2 = findViewById(R.id.bookAuthor2);
                 TextView bookAuthor3 = findViewById(R.id.bookAuthor3);
                 TextView testCartoonBook = findViewById(R.id.testCartoonBook);
-
-//                bookId1.setText(listBookId.get(0).toString());
-//                bookId2.setText(listBookId.get(1).toString());
-//                bookId3.setText(listBookId.get(2).toString());
-//                bookName1.setText(listBookName.get(0).toString());
-//                bookName2.setText(listBookName.get(1).toString());
-//                bookName3.setText(listBookName.get(2).toString());
-//                bookAuthor1.setText(listBookAuthor.get(0).toString());
-//                bookAuthor2.setText(listBookAuthor.get(1).toString());
-//                bookAuthor3.setText(listBookAuthor.get(2).toString());
-
-                /*bookId1.setText(String.valueOf(cartoon.getId()));
-                bookId2.setText(String.valueOf(history.getId()));
-                bookId3.setText(String.valueOf(noval.getId()));
-                bookName1.setText(cartoon.getName());
-                bookName2.setText(history.getName());
-                bookName3.setText(noval.getName());
-                bookAuthor1.setText(cartoon.getAuthor());
-                bookAuthor2.setText(history.getAuthor());
-                bookAuthor3.setText(noval.getAuthor());
-                testCartoonBook.setText(cartoon.toString());*/
 
                 bookId1.setText(String.valueOf(book[0].getId()));
                 bookId2.setText(String.valueOf(book[1].getId()));
@@ -316,7 +289,6 @@ public class MainActivity extends AppCompatActivity {
             String name = params[0];
             String JSONResult = "";
             String urlParameters  = "name=" + name;
-            //int    postDataLength = postData.length;
             try
             {
                 url = new URL(getResources().getString(R.string.ip_address_delete)+"?"+urlParameters);
@@ -326,6 +298,93 @@ public class MainActivity extends AppCompatActivity {
                 urlConnection.setDoOutput(true);
                 urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 urlConnection.setRequestProperty("charset", "utf-8");
+
+                code = urlConnection.getResponseCode();
+
+                //InputStream decode urlConnection to Byte format
+                InputStream Byte = urlConnection.getInputStream();
+                //InputStreamReader decode Byte format to Char format
+                InputStreamReader Char = new InputStreamReader(Byte);
+                BufferedReader reader = new BufferedReader(Char);
+                StringBuilder builder = new StringBuilder();
+
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line + "\n");
+                }
+
+                reader.close();
+                JSONResult = builder.toString();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                if(urlConnection != null)
+                {
+                    urlConnection.disconnect();
+                }
+            }
+            return JSONResult;
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            super.onPostExecute(result);
+            resultResponse.setText("Number of row was updated: " + result + "\n" + "Response code:  " + code);
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values)
+        {
+
+        }
+    }
+
+    private class updateBook extends AsyncTask<String[], Void, String>
+    {
+        public int code;
+        @Override
+        protected void onPreExecute()
+        {
+
+        }
+
+        @Override
+        protected String doInBackground(String[]... params)
+        {
+            URL url;
+            HttpURLConnection urlConnection = null;
+            String line;
+            String JSONResult = "";
+            String[] parameter = params[0];
+            JSONObject bookJson = new JSONObject();
+
+            try
+            {
+                bookJson.put("id" , parameter[0].toString());
+                bookJson.put("name", parameter[1].toString());
+                bookJson.put("author", parameter[2].toString());
+            }
+            catch (JSONException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            try
+            {
+                url = new URL(getResources().getString(R.string.ip_address_update));
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("PUT");
+                urlConnection.setDoOutput(true);
+                urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf8");
+
+                OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+                wr.write(bookJson.toString());
+                wr.flush();
+                wr.close();
 
                 code = urlConnection.getResponseCode();
 
