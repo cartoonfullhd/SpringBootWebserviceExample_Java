@@ -3,6 +3,9 @@ package com.example.user.springbootwebserviceexample_java;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +23,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
     TextView resultResponse;
     Button addBtn, deleteBtn, updateBtn;
     String txtName, txtAuthor, txtId;
+    private RecyclerView recyclerView;
+    private BookAdapter bookAdapter;
+    private List<Book> bookList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         addBtn = findViewById(R.id.addButton);
         deleteBtn = findViewById(R.id.deleteButton);
         updateBtn = findViewById(R.id.updateButton);
+        recyclerView = findViewById(R.id.recycler_view);
         new getBook().execute();
 
         addBtn.setOnClickListener(new View.OnClickListener()
@@ -117,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
             String JSONResult = "";
             try
             {
-                url = new URL(getResources().getString(R.string.ip_address));
+                url = new URL(getResources().getString(R.string.ip_address)+"allBook");
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 //InputStream decode urlConnection to Byte format
@@ -160,29 +169,13 @@ public class MainActivity extends AppCompatActivity {
                 {
                     JSONObject bookObj = bookArray.getJSONObject(i);
                     book[i] = new Book(Integer.parseInt(bookObj.getString("id")), bookObj.getString("name"), bookObj.getString("author"));
+                    bookList.add(book[i]);
                 }
-                TextView bookId1 = findViewById(R.id.bookId1);
-                TextView bookId2 = findViewById(R.id.bookId2);
-                TextView bookId3 = findViewById(R.id.bookId3);
-                TextView bookName1 = findViewById(R.id.bookName1);
-                TextView bookName2 = findViewById(R.id.bookName2);
-                TextView bookName3 = findViewById(R.id.bookName3);
-                TextView bookAuthor1 = findViewById(R.id.bookAuthor1);
-                TextView bookAuthor2 = findViewById(R.id.bookAuthor2);
-                TextView bookAuthor3 = findViewById(R.id.bookAuthor3);
-                TextView testCartoonBook = findViewById(R.id.testCartoonBook);
-
-                bookId1.setText(String.valueOf(book[0].getId()));
-                bookId2.setText(String.valueOf(book[1].getId()));
-                bookId3.setText(String.valueOf(book[2].getId()));
-                bookName1.setText(book[0].getName());
-                bookName2.setText(book[1].getName());
-                bookName3.setText(book[2].getName());
-                bookAuthor1.setText(book[0].getAuthor());
-                bookAuthor2.setText(book[1].getAuthor());
-                bookAuthor3.setText(book[2].getAuthor());
-                testCartoonBook.setText(book[0].toString());
-
+                bookAdapter = new BookAdapter(bookList);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                recyclerView.setLayoutManager(mLayoutManager);
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+                recyclerView.setAdapter(bookAdapter);
             }
             catch (JSONException e)
             {
@@ -220,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
             int    postDataLength = postData.length;
             try
             {
-                url = new URL(getResources().getString(R.string.ip_address_add));
+                url = new URL(getResources().getString(R.string.ip_address)+"addBook");
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("POST");
@@ -262,6 +255,10 @@ public class MainActivity extends AppCompatActivity {
         {
             super.onPostExecute(result);
             resultResponse.setText("Number of row was updated: " + result + "\n" + "Response code:  " + code);
+            recyclerView.setAdapter(null);
+            bookAdapter.notifyDataSetChanged();
+            bookList.clear();
+            new getBook().execute();
         }
 
         @Override
@@ -291,8 +288,7 @@ public class MainActivity extends AppCompatActivity {
             String urlParameters  = "name=" + name;
             try
             {
-                url = new URL(getResources().getString(R.string.ip_address_delete)+"?"+urlParameters);
-
+                url = new URL(getResources().getString(R.string.ip_address) + "deleteBook" +"?"+urlParameters);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("DELETE");
                 urlConnection.setDoOutput(true);
@@ -334,6 +330,10 @@ public class MainActivity extends AppCompatActivity {
         {
             super.onPostExecute(result);
             resultResponse.setText("Number of row was updated: " + result + "\n" + "Response code:  " + code);
+            recyclerView.setAdapter(null);
+            bookAdapter.notifyDataSetChanged();
+            bookList.clear();
+            new getBook().execute();
         }
 
         @Override
@@ -375,7 +375,7 @@ public class MainActivity extends AppCompatActivity {
             }
             try
             {
-                url = new URL(getResources().getString(R.string.ip_address_update));
+                url = new URL(getResources().getString(R.string.ip_address) + "updateBook");
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("PUT");
                 urlConnection.setDoOutput(true);
@@ -421,6 +421,10 @@ public class MainActivity extends AppCompatActivity {
         {
             super.onPostExecute(result);
             resultResponse.setText("Number of row was updated: " + result + "\n" + "Response code:  " + code);
+            recyclerView.setAdapter(null);
+            bookAdapter.notifyDataSetChanged();
+            bookList.clear();
+            new getBook().execute();
         }
 
         @Override
@@ -428,5 +432,6 @@ public class MainActivity extends AppCompatActivity {
         {
 
         }
+
     }
 }

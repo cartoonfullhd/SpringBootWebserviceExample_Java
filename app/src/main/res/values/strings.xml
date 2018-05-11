@@ -1,7 +1,4 @@
 <resources>
     <string name="app_name">SpringBootWebServiceExample_Java</string>
-    <string name="ip_address">http://192.168.3.108:8082/allBook</string>
-    <string name="ip_address_add">http://192.168.3.108:8082/addBook</string>
-    <string name="ip_address_delete">http://192.168.3.108:8082/deleteBook</string>
-    <string name="ip_address_update">http://192.168.3.108:8082/updateBook</string>
+    <string name="ip_address">http://192.168.5.110:8082/</string>
 </resources>
