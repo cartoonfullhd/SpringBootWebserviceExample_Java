@@ -17,15 +17,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:textSize="16dp"
-        android:layout_marginRight="25dp"
         android:text="id"/>
 
     <TextView
         android:id="@+id/nameList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/idList"
-        android:layout_marginRight="25dp"
+        android:layout_centerHorizontal="true"
         android:textSize="16dp"
         android:text="name"/>
 
@@ -33,8 +31,7 @@
         android:id="@+id/authorList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/nameList"
-        android:layout_marginRight="25dp"
+        android:layout_alignParentRight="true"
         android:textSize="16dp"
         android:text="author"/>
 

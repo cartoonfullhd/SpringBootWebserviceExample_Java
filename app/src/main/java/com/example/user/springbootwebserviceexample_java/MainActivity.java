@@ -76,13 +76,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 // TODO Auto-generated method stub
-                txtName = editNameBook.getText().toString();
-                if(TextUtils.isEmpty(txtName))
+                txtId = editIdBook.getText().toString();
+                if(TextUtils.isEmpty(txtId))
                 {
-                    editNameBook.setError("Input name of book");
+                    editIdBook.setError("Input id of book");
                 }
                 else{
-                    new deleteBook().execute(txtName);
+                    new deleteBook().execute(txtId);
                 }
             }
         });
@@ -283,17 +283,17 @@ public class MainActivity extends AppCompatActivity {
             URL url;
             HttpURLConnection urlConnection = null;
             String line;
-            String name = params[0];
+            String id = params[0];
             String JSONResult = "";
-            String urlParameters  = "name=" + name;
+            String urlParameters  = "id=" + id;
             try
             {
                 url = new URL(getResources().getString(R.string.ip_address) + "deleteBook" +"?"+urlParameters);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("DELETE");
-                urlConnection.setDoOutput(true);
+                /*urlConnection.setDoOutput(true);
                 urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                urlConnection.setRequestProperty("charset", "utf-8");
+                urlConnection.setRequestProperty("charset", "utf-8");*/
 
                 code = urlConnection.getResponseCode();
 
